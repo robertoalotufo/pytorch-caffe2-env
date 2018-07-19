@@ -29,24 +29,26 @@ if [[ "$ANS" == "no" ]]; then
 fi
 
 ask_user "Do you want to enable CUDA and CUDNN support for PyTorch (CUDNN v6 or above required)?" "yes" "no"
-CUDA_CONFIG=""
 if [[ "$ANS" == "no" ]]; then
-	CUDA_CONFIG="CMAKE_ARGS=-DUSE_CUDA=OFF"
+	export CMAKE_ARGS=-DUSE_CUDA=OFF
 else
 	printf "Please enter the CUDNN include path: "
 	read -r CUDNN_INCLUDE_DIR
+	export CUDNN_INCLUDE_DIR
 	printf "Please enter the CUDNN library path: "
 	read -r CUDNN_LIB_DIR
+	export CUDNN_LIB_DIR
 	echo "What compiler use to compile the CUDA code?"
 	printf "C compiler name: "
 	read -r CC
-	CUDA_CONFIG="CUDNN_INCLUDE_DIR=${CUDNN_INCLUDE_DIR} CUDNN_LIB_DIR=${CUDNN_LIB_DIR} CC=${CC}"
-
+	export CC
 fi
 
 cd pytorch
-$CUDA_CONFIG python2 setup.py install "$SETUP_USER_FLAG"
-CMAKE_ARGS=-DUSE_CUDA=OFF python2 setup_caffe2.py install "$SETUP_USER_FLAG"
+python2 setup.py install "$SETUP_USER_FLAG"
+
+export CMAKE_ARGS=-DUSE_CUDA=OFF
+python2 setup_caffe2.py install "$SETUP_USER_FLAG"
 
 cd third_party/onnx/
 python2 setup.py install "$SETUP_USER_FLAG"
@@ -54,5 +56,5 @@ python2 setup.py install "$SETUP_USER_FLAG"
 cd third_party/pybind11/
 python2 setup.py install "$SETUP_USER_FLAG"
 
-cd REPO_ROOT
+cd "${REPO_ROOT}/vision/"
 python2 setup.py install "$SETUP_USER_FLAG"
