@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+git submodule update --init --recursive
+
 USER_ANS=0
 REPO_ROOT=$(pwd)
 
